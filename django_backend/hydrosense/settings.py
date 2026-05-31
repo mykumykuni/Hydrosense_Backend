@@ -85,16 +85,14 @@ import dj_database_url
 
 _db_url = config('DATABASE_URL', default='')
 if _db_url:
+    # Use cloud database (Supabase, Render, etc.)
     DATABASES = {'default': dj_database_url.parse(_db_url, conn_max_age=600)}
 else:
+    # Fallback to SQLite for local development when DATABASE_URL is not set
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME', default='hydrosense_db'),
-            'USER': config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
 
