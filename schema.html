@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HydroSense — Database Schema</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 48px 40px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 40px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-left: 8px;
+      vertical-align: middle;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-singleton { background: #fef3c7; color: #92400e; }
+    .badge-capped    { background: #ede9fe; color: #5b21b6; }
+
+    section {
+      margin-bottom: 36px;
+      break-inside: avoid;
+    }
+
+    section h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #64748b;
+      margin-bottom: 10px;
+    }
+
+    .table-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    thead tr {
+      background: #0f172a;
+      color: #f1f5f9;
+    }
+
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody td {
+      padding: 9px 14px;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: #f1f5f9;
+      color: #0369a1;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin: 1px 2px 1px 0;
+      white-space: nowrap;
+    }
+
+    .pill-gray   { background: #f1f5f9; color: #475569; }
+    .pill-green  { background: #dcfce7; color: #166534; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-purple { background: #ede9fe; color: #5b21b6; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-red    { background: #fee2e2; color: #991b1b; }
+
+    .note {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    @media print {
+      body { background: white; padding: 24px; }
+      section { break-inside: avoid; }
+      table { box-shadow: none; border: 1px solid #e2e8f0; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>HydroSense — Database Schema</h1>
+  <p>May 31, 2026 &nbsp;·&nbsp; Django + PostgreSQL backend &nbsp;·&nbsp; 8 tables across 6 apps</p>
+</header>
+
+<!-- ─── SENSOR DEVICES ─────────────────────────────────────────────────── -->
+<section>
+  <h2>Sensors App</h2>
+  <div class="table-name">sensor_devices</div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>device_id</code></td><td>CharField(100)</td><td>Unique device identifier</td></tr>
+      <tr><td><code>name</code></td><td>CharField(200)</td><td></td></tr>
+      <tr><td><code>location</code></td><td>CharField(200)</td><td>Optional</td></tr>
+      <tr><td><code>is_active</code></td><td>BooleanField</td><td>Default <code>True</code></td></tr>
+      <tr><td><code>created_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+      <tr><td><code>updated_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── SENSOR READINGS ────────────────────────────────────────────────── -->
+<section>
+  <div class="table-name">sensor_readings</div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>device</code></td><td>FK → sensor_devices</td><td>Nullable, SET NULL on delete</td></tr>
+      <tr><td><code>do</code></td><td>FloatField</td><td>Dissolved oxygen (mg/L), nullable</td></tr>
+      <tr><td><code>ph</code></td><td>FloatField</td><td>pH level, nullable</td></tr>
+      <tr><td><code>temp</code></td><td>FloatField</td><td>Temperature (°C), nullable</td></tr>
+      <tr><td><code>salinity</code></td><td>FloatField</td><td>Salinity (ppt), nullable</td></tr>
+      <tr><td><code>timestamp</code></td><td>DateTimeField</td><td>Device-reported timestamp</td></tr>
+      <tr><td><code>received_at</code></td><td>DateTimeField</td><td>Auto — server receipt time</td></tr>
+      <tr><td><code>raw_payload</code></td><td>JSONField</td><td>Full device payload, nullable</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── THRESHOLDS ────────────────────────────────────────────────────── -->
+<section>
+  <div class="table-name">thresholds <span class="badge badge-singleton">singleton pk=1</span></div>
+  <p style="font-size:0.82rem;color:#888;margin:0 0 10px 2px;">
+    3-level system: <strong>Safe</strong> = within [min, max] &nbsp;|&nbsp;
+    <strong>Warning</strong> = outside min/max but within critical bounds &nbsp;|&nbsp;
+    <strong>Critical</strong> = outside critical bounds
+  </p>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Default</th></tr></thead>
+    <tbody>
+      <tr><td><code>do_min</code></td><td>FloatField</td><td><code>4.0</code> mg/L — safe lower</td></tr>
+      <tr><td><code>do_max</code></td><td>FloatField</td><td><code>9.0</code> mg/L — safe upper</td></tr>
+      <tr><td><code>do_critical_min</code></td><td>FloatField</td><td><code>1.4</code> mg/L — critical lower</td></tr>
+      <tr><td><code>do_critical_max</code></td><td>FloatField</td><td><code>12.0</code> mg/L — critical upper</td></tr>
+      <tr><td><code>ph_min</code></td><td>FloatField</td><td><code>6.0</code> — safe lower</td></tr>
+      <tr><td><code>ph_max</code></td><td>FloatField</td><td><code>8.0</code> — safe upper</td></tr>
+      <tr><td><code>ph_critical_min</code></td><td>FloatField</td><td><code>4.0</code> — critical lower</td></tr>
+      <tr><td><code>ph_critical_max</code></td><td>FloatField</td><td><code>10.0</code> — critical upper</td></tr>
+      <tr><td><code>temp_min</code></td><td>FloatField</td><td><code>28.0</code> °C — safe lower</td></tr>
+      <tr><td><code>temp_max</code></td><td>FloatField</td><td><code>32.0</code> °C — safe upper</td></tr>
+      <tr><td><code>temp_critical_min</code></td><td>FloatField</td><td><code>25.0</code> °C — critical lower</td></tr>
+      <tr><td><code>temp_critical_max</code></td><td>FloatField</td><td><code>35.0</code> °C — critical upper</td></tr>
+      <tr><td><code>salinity_min</code></td><td>FloatField</td><td><code>28.0</code> ppt — safe lower</td></tr>
+      <tr><td><code>salinity_max</code></td><td>FloatField</td><td><code>33.0</code> ppt — safe upper</td></tr>
+      <tr><td><code>salinity_critical_min</code></td><td>FloatField</td><td><code>20.0</code> ppt — critical lower</td></tr>
+      <tr><td><code>salinity_critical_max</code></td><td>FloatField</td><td><code>40.0</code> ppt — critical upper</td></tr>
+      <tr><td><code>updated_by</code></td><td>FK → users</td><td>Nullable</td></tr>
+      <tr><td><code>updated_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── ALERTS ────────────────────────────────────────────────────────── -->
+<section>
+  <h2>Alerts App</h2>
+  <div class="table-name">alerts <span class="badge badge-capped">max 300</span></div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>uid</code></td><td>CharField(32)</td><td>Unique — format <code>{ts}-{rand6}</code></td></tr>
+      <tr><td><code>severity</code></td><td>CharField</td><td>
+        <span class="pill pill-red">critical</span>
+        <span class="pill pill-amber">warning</span>
+        <span class="pill pill-blue">info</span>
+      </td></tr>
+      <tr><td><code>title</code></td><td>CharField(200)</td><td></td></tr>
+      <tr><td><code>message</code></td><td>TextField</td><td></td></tr>
+      <tr><td><code>source</code></td><td>CharField(100)</td><td>e.g. <code>do</code>, <code>manual-operator</code>, <code>ph-operator-report</code></td></tr>
+      <tr><td><code>resolved</code></td><td>BooleanField</td><td>Default <code>False</code>; set by admin</td></tr>
+      <tr><td><code>read_by</code></td><td>M2M → users</td><td>Per-user read tracking</td></tr>
+      <tr><td><code>created_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Oldest entries are pruned automatically when the 300-entry cap is exceeded.</p>
+</section>
+
+<!-- ─── AUDIT LOGS ────────────────────────────────────────────────────── -->
+<section>
+  <h2>Audit App</h2>
+  <div class="table-name">audit_logs <span class="badge badge-capped">max 200</span></div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>uid</code></td><td>CharField(32)</td><td>Unique — format <code>aud-{ts}-{rand4}</code></td></tr>
+      <tr><td><code>action</code></td><td>CharField</td><td>
+        <span class="pill pill-gray">clear_all_alerts</span>
+        <span class="pill pill-gray">resolve_alert</span>
+        <span class="pill pill-gray">create_manual_alert</span>
+        <span class="pill pill-gray">update_threshold</span>
+        <span class="pill pill-gray">set_history_window</span>
+        <span class="pill pill-gray">set_announcement</span>
+        <span class="pill pill-gray">clear_announcement</span>
+        <span class="pill pill-gray">add_announcement_to_history</span>
+        <span class="pill pill-gray">approve_user</span>
+        <span class="pill pill-gray">deactivate_user</span>
+      </td></tr>
+      <tr><td><code>actor_email</code></td><td>EmailField</td><td>Denormalized — preserved if account deleted</td></tr>
+      <tr><td><code>detail</code></td><td>TextField</td><td>Human-readable description</td></tr>
+      <tr><td><code>created_at</code></td><td>DateTimeField</td><td>Auto — immutable</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Read-only via API (admin only). Written programmatically by views.</p>
+</section>
+
+<!-- ─── SHIFT LOGS ────────────────────────────────────────────────────── -->
+<section>
+  <h2>Shifts App</h2>
+  <div class="table-name">shift_logs <span class="badge badge-capped">max 100</span></div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>uid</code></td><td>CharField(32)</td><td>Unique — format <code>sl-{ts}-{rand6}</code></td></tr>
+      <tr><td><code>operator</code></td><td>FK → users</td><td>Nullable, SET NULL on delete</td></tr>
+      <tr><td><code>operator_email</code></td><td>EmailField</td><td>Denormalized</td></tr>
+      <tr><td><code>operator_name</code></td><td>CharField(200)</td><td>Denormalized from profile</td></tr>
+      <tr><td><code>note</code></td><td>TextField(1000)</td><td>Max 1000 characters</td></tr>
+      <tr><td><code>created_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── USERS ─────────────────────────────────────────────────────────── -->
+<section>
+  <h2>Users App</h2>
+  <div class="table-name">users</div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>email</code></td><td>EmailField</td><td>Unique — used as login username</td></tr>
+      <tr><td><code>role</code></td><td>CharField</td><td>
+        <span class="pill pill-purple">admin</span>
+        <span class="pill pill-green">operator</span>
+      </td></tr>
+      <tr><td><code>status</code></td><td>CharField</td><td>
+        <span class="pill pill-amber">pending</span>
+        <span class="pill pill-green">active</span>
+        <span class="pill pill-gray">inactive</span>
+      </td></tr>
+      <tr><td><code>password</code></td><td>CharField</td><td>Django PBKDF2 hash (internal)</td></tr>
+      <tr><td><code>approved_at</code></td><td>DateTimeField</td><td>Nullable — set by admin on approval</td></tr>
+      <tr><td><code>deactivated_at</code></td><td>DateTimeField</td><td>Nullable</td></tr>
+      <tr><td><code>last_login_at</code></td><td>DateTimeField</td><td>Nullable</td></tr>
+      <tr><td><code>revoked_since</code></td><td>DateTimeField</td><td>Nullable — JWTs with <code>iat</code> before this are rejected</td></tr>
+      <tr><td><code>date_joined</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── USER PROFILES ─────────────────────────────────────────────────── -->
+<section>
+  <div class="table-name">user_profiles <span class="badge badge-singleton">1:1 with users</span></div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>user</code></td><td>OneToOne → users</td><td>CASCADE on delete</td></tr>
+      <tr><td><code>display_name</code></td><td>CharField(200)</td><td>Optional</td></tr>
+      <tr><td><code>photo_data_url</code></td><td>TextField</td><td>Base64 data URL, optional</td></tr>
+      <tr><td><code>phone</code></td><td>CharField(30)</td><td>Optional</td></tr>
+      <tr><td><code>address</code></td><td>TextField</td><td>Optional</td></tr>
+      <tr><td><code>bio</code></td><td>TextField</td><td>Optional</td></tr>
+      <tr><td><code>position</code></td><td>CharField(200)</td><td>Job title, optional</td></tr>
+      <tr><td><code>emergency_contact</code></td><td>TextField</td><td>Optional</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── REPORTS ───────────────────────────────────────────────────────── -->
+<section>
+  <h2>Reports App</h2>
+  <div class="table-name">reports</div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>type</code></td><td>CharField</td><td>
+        <span class="pill pill-gray">equipment</span>
+        <span class="pill pill-blue">water_quality</span>
+        <span class="pill pill-green">general</span>
+        <span class="pill pill-purple">custom</span>
+      </td></tr>
+      <tr><td><code>priority</code></td><td>CharField</td><td>
+        <span class="pill pill-gray">low</span>
+        <span class="pill pill-blue">medium</span>
+        <span class="pill pill-amber">high</span>
+        <span class="pill pill-red">urgent</span>
+      </td></tr>
+      <tr><td><code>subject</code></td><td>CharField(500)</td><td>Auto-set for standard types; free text for <code>custom</code></td></tr>
+      <tr><td><code>message</code></td><td>TextField</td><td></td></tr>
+      <tr><td><code>status</code></td><td>CharField</td><td>
+        <span class="pill pill-blue">open</span>
+        <span class="pill pill-amber">acknowledged</span>
+        <span class="pill pill-green">resolved</span>
+        <span class="pill pill-gray">closed</span>
+      </td></tr>
+      <tr><td><code>submitted_by</code></td><td>FK → users</td><td>Nullable, SET NULL on delete</td></tr>
+      <tr><td><code>submitted_by_email</code></td><td>EmailField</td><td>Denormalized</td></tr>
+      <tr><td><code>created_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+      <tr><td><code>updated_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─── REPORT REPLIES ────────────────────────────────────────────────── -->
+<section>
+  <div class="table-name">report_replies</div>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><code>id</code></td><td>BigAutoField</td><td>Primary key</td></tr>
+      <tr><td><code>report</code></td><td>FK → reports</td><td>CASCADE on delete</td></tr>
+      <tr><td><code>author</code></td><td>FK → users</td><td>Nullable, SET NULL on delete</td></tr>
+      <tr><td><code>author_email</code></td><td>EmailField</td><td>Denormalized</td></tr>
+      <tr><td><code>message</code></td><td>TextField</td><td>Admin reply only</td></tr>
+      <tr><td><code>created_at</code></td><td>DateTimeField</td><td>Auto</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Only applicable for <code>general</code> and <code>custom</code> report types.</p>
+</section>
+
+</body>
+</html>
